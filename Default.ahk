@@ -1,17 +1,21 @@
 ﻿#Requires AutoHotkey v2.0
 #SingleInstance Force
 
+A_MaxHotkeysPerInterval := 200
+
 ; =================================================== ;
 ; Key Mappings                                        ;
 ; =================================================== ;
 Xbutton1::
 {
+    ; vscode comment / uncomment
     Send("+!K")
 }
 
 Xbutton2::
 {
     VolumeScroll_OnXbutton2Down()
+    ; vscode comment /uncomment
     Send("+!U")
 }
 
@@ -34,6 +38,26 @@ WheelUp::
     )
 }
 
+F13 & WheelDown::
+{
+    TabScroll_OnWheelDown()
+}
+
+F13 & WheelUp::
+{
+    TabScroll_OnWheelUp( )
+}
+
+~!WheelDown::
+{
+    WindowScroll_OnWheelDown(()=>{})
+}
+
+~!WheelUp::
+{
+    WindowScroll_OnWheelUp(()=>{})
+}
+
 +^Up::
 {
     FastScroll_OnUpPressed()
@@ -54,6 +78,72 @@ WheelUp::
     FastScroll_OnRightPressed()
 }
 
+F14::
+{
+   WindowScroll_OnF14Down() 
+}
+
+F14 up::
+{
+   WindowScroll_OnF14Up()
+}
+
+; =================================================== ;
+; Tab Scroll F13 + Scroll 
+; =================================================== ;
+
+TabScroll_OnWheelDown() {
+    Send("{Ctrl down}{Tab}{Ctrl up}")
+    return
+}
+
+TabScroll_OnWheelUp() {
+    Send("{Ctrl down}{Shift down}{Tab}{Shift up}{Ctrl up}")
+    return
+}
+
+; =================================================== ;
+; Window Scroll F14 + Scroll 
+; =================================================== ;
+global F14Bool := False
+
+WindowScroll_OnF14Down() {
+    global F14Bool
+    F14Bool := True
+
+    Send("{Alt down}")
+}
+
+WindowScroll_OnF14Up() {
+    global F14Bool
+    F14Bool := False
+
+    Send("{Alt up}")
+}
+
+WindowScroll_OnWheelDown(callback) {
+    global F14Bool
+    
+    if (F14Bool) {
+        Send("{Tab}")
+        return
+    }
+
+    callback.Call()
+}
+
+WindowScroll_OnWheelUp(callback) {
+    global F14Bool
+
+    if (F14Bool) {
+        Send("{Shift down}{Tab}{Shift up}")
+        return
+    }
+
+    callback.Call()
+}
+
+
 ; =================================================== ;
 ; Scroll Volume when Mouse button 5 is held down      ;
 ; =================================================== ;
@@ -62,7 +152,6 @@ global ScrollVolumeBool := False
 VolumeScroll_OnXbutton2Down() {
     global ScrollVolumeBool
     ScrollVolumeBool := True
-
 }
 
 VolumeScroll_OnXbutton2Up() {
@@ -78,7 +167,7 @@ VolumeScroll_OnWheelDown(callback) {
         return
     }
 
-    callback()
+    callback.Call()
 }
 
 VolumeScroll_OnWheelUp(callback) {
@@ -89,7 +178,7 @@ VolumeScroll_OnWheelUp(callback) {
         return
     }
 
-    callback()
+    callback.Call()
 }
 
 ; =================================================== ;
