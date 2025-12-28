@@ -26,9 +26,6 @@ Xbutton2 up::
 
 WheelDown::
 {
-    ToolTip(
-    "d"
-    )
     VolumeScroll_OnWheelDown(() => 
         FastScroll_OnWheelDown()
     )
@@ -36,9 +33,6 @@ WheelDown::
         
 WheelUp::
 {
-    ToolTip(
-        "u"
-    )
     VolumeScroll_OnWheelUp(() => 
         FastScroll_OnWheelUp()
     )
@@ -89,7 +83,7 @@ F14 & WheelUp::
     Send("{Ctrl down}")
 }
 
-~F13::
+~F13 up::
 {
     Send("{Ctrl up}")
 }
@@ -104,6 +98,10 @@ F14 & WheelUp::
     Send("{Alt up}")
 }
 
+F15::
+{
+    Send("{LWin down}{Tab}{LWin up}")
+}                            
 
 ; =================================================== ;
 ; Tab Scroll F13 / F14 + Scroll 
@@ -118,6 +116,13 @@ TabScroll_OnWheelUp() {
     Send("{Shift down}{Tab}{Shift up}")
     return
 }
+
+; =================================================== ;
+; Task view toggle + scroll F15
+; =================================================== ;
+
+
+
 
 ; =================================================== ;
 ; Scroll Volume when Mouse button 5 is held down      ;
