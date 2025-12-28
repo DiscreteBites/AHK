@@ -26,13 +26,19 @@ Xbutton2 up::
 
 WheelDown::
 {
+    ToolTip(
+    "d"
+    )
     VolumeScroll_OnWheelDown(() => 
         FastScroll_OnWheelDown()
     )
 }
-
+        
 WheelUp::
 {
+    ToolTip(
+        "u"
+    )
     VolumeScroll_OnWheelUp(() => 
         FastScroll_OnWheelUp()
     )
@@ -45,17 +51,17 @@ F13 & WheelDown::
 
 F13 & WheelUp::
 {
-    TabScroll_OnWheelUp( )
+    TabScroll_OnWheelUp()
 }
 
-~!WheelDown::
+F14 & WheelDown::
 {
-    WindowScroll_OnWheelDown(()=>{})
+    TabScroll_OnWheelDown()
 }
 
-~!WheelUp::
+F14 & WheelUp::
 {
-    WindowScroll_OnWheelUp(()=>{})
+    TabScroll_OnWheelUp
 }
 
 +^Up::
@@ -78,71 +84,40 @@ F13 & WheelUp::
     FastScroll_OnRightPressed()
 }
 
-F14::
+~F13::
 {
-   WindowScroll_OnF14Down() 
+    Send("{Ctrl down}")
 }
 
-F14 up::
+~F13::
 {
-   WindowScroll_OnF14Up()
+    Send("{Ctrl up}")
 }
+
+~F14::
+{
+    Send("{Alt down}")
+}
+
+~F14 up::
+{
+    Send("{Alt up}")
+}
+
 
 ; =================================================== ;
-; Tab Scroll F13 + Scroll 
+; Tab Scroll F13 / F14 + Scroll 
 ; =================================================== ;
 
 TabScroll_OnWheelDown() {
-    Send("{Ctrl down}{Tab}{Ctrl up}")
+    Send("{Tab}")
     return
 }
 
 TabScroll_OnWheelUp() {
-    Send("{Ctrl down}{Shift down}{Tab}{Shift up}{Ctrl up}")
+    Send("{Shift down}{Tab}{Shift up}")
     return
 }
-
-; =================================================== ;
-; Window Scroll F14 + Scroll 
-; =================================================== ;
-global F14Bool := False
-
-WindowScroll_OnF14Down() {
-    global F14Bool
-    F14Bool := True
-
-    Send("{Alt down}")
-}
-
-WindowScroll_OnF14Up() {
-    global F14Bool
-    F14Bool := False
-
-    Send("{Alt up}")
-}
-
-WindowScroll_OnWheelDown(callback) {
-    global F14Bool
-    
-    if (F14Bool) {
-        Send("{Tab}")
-        return
-    }
-
-    callback.Call()
-}
-
-WindowScroll_OnWheelUp(callback) {
-    global F14Bool
-
-    if (F14Bool) {
-        Send("{Shift down}{Tab}{Shift up}")
-        return
-    }
-
-    callback.Call()
-}
-
 
 ; =================================================== ;
 ; Scroll Volume when Mouse button 5 is held down      ;
@@ -336,5 +311,39 @@ Notify(SpeedVar) {
 
     ; Always clean up
     SetTimer(ClearNotify, -500)
+    Return
+}
+
+; =================================================== ;
+; Debug pop up window                                 ;
+; =================================================== ;
+
+Debug(message) {
+    global debugWindow
+    global debugWindowHandle
+    global debugTextCtrl
+
+    if !IsSet(debugWindow) {
+        
+        ; Create Gui Element
+        debugWindow := Gui("-Resize +AlwaysOnTop -MinimizeBox -Caption +Border", "Debug")
+        debugWindow.SetFont("s10 q5")
+        debugTextCtrl := debugWindow.Add("Text", , "Debug:  " message)
+        
+        ; Get the GUI's dimensions
+        debugWindow.GetPos(&X, &Y, &W, &H)
+
+        dX := A_ScreenWidth - debugWindow.MarginX - 235
+        dY := A_ScreenHeight- debugWindow.MarginY - 145
+        debugWindow.Show("w130 h34 x" dX " y" dY)
+        debugWindowHandle := debugWindow.Hwnd
+
+    } else if (IsSet(debugWindowHandle) 
+        && WinExist("ahk_id " debugWindowHandle)) {
+
+        debugTextCtrl.Text :=  "Debug:  " message
+
+    }
+
     Return
 }
