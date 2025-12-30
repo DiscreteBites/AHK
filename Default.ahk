@@ -122,6 +122,9 @@ TabScroll_OnWheelUp() {
 ; =================================================== ;
 global activeWindowId
 
+CoordMode "Mouse", "Screen"
+CoordMode "Pixel", "Screen"
+
 SetFocusWindow() {
     global activeWindowId
 
@@ -129,10 +132,12 @@ SetFocusWindow() {
 
     if (!IsSet(activeWindowId)) || (newActiveId != activeWindowId) {
         activeWindowId := newActiveId
+
         WinGetPos &X, &Y, &W, &H, "ahk_id " activeWindowId
-        if (W > 0 && h > 0) {
-            MouseMove X + W/2, Y + H/2, 0
-        }
+
+		if (W > 0 && H > 0) {
+			MouseMove X + W//2, Y + H // 2, 0
+	    }
     }
 
 }
