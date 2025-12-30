@@ -100,7 +100,7 @@ F14 & WheelUp::
 
 F15::
 {
-    Send("{LWin down}{Tab}{LWin up}")
+    SetFocusWindow()
 }                            
 
 ; =================================================== ;
@@ -118,11 +118,24 @@ TabScroll_OnWheelUp() {
 }
 
 ; =================================================== ;
-; Task view toggle + scroll F15
+; Snap mouse to focused window 
 ; =================================================== ;
+global activeWindowId
 
+SetFocusWindow() {
+    global activeWindowId
 
+    newActiveId := WinGetID("A")
 
+    if (!IsSet(activeWindowId)) || (newActiveId != activeWindowId) {
+        activeWindowId := newActiveId
+        WinGetPos &X, &Y, &W, &H, "ahk_id " activeWindowId
+        if (W > 0 && h > 0) {
+            MouseMove X + W/2, Y + H/2, 0
+        }
+    }
+
+}
 
 ; =================================================== ;
 ; Scroll Volume when Mouse button 5 is held down      ;
